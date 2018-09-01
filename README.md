@@ -3,4 +3,4 @@
 
 #启动项目
 ```js
-  node npm app.js 
+  node npm app.js
