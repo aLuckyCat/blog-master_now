@@ -15,15 +15,10 @@ router.get(/^\/user\/[(?=reg)|(?=login)]/,async ctx=>{
     const show  = /reg$/.test(ctx.path);
     await ctx.render('register',{show})
 })
-//处理用户登录的情求 post
-router.post('/user/login',async (ctx)=>{
-    console.log('用户数据到达');
-    const data = ctx.request.body;
-
-});
 //处理用户注册的情求 post
 router.post('/user/reg',user.reg)
-
+//处理用户登录的情求  post
+router.post('/user/login',user.login)
 
 
 
