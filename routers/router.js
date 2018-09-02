@@ -1,8 +1,7 @@
 
 const Router = require('koa-router')
 const router = new Router();
-const fs = require('fs')
-
+const user = require('../control/user')
 //设计主页
 router.get('/',async ctx=>{
     //需要title属性
@@ -10,10 +9,23 @@ router.get('/',async ctx=>{
         title:"假装这是一个正经的title"
     })
 })
-//动态路由 用来处理 用户登录注册以及退出
+//(:id)动态路由 用来处理 用户登录注册以及退出
 router.get(/^\/user\/[(?=reg)|(?=login)]/,async ctx=>{
     //show 为true是显示注册页面  否则显示登录页面
     const show  = /reg$/.test(ctx.path);
     await ctx.render('register',{show})
 })
+//处理用户登录的情求 post
+router.post('/user/login',async (ctx)=>{
+    console.log('用户数据到达');
+    const data = ctx.request.body;
+
+});
+//处理用户注册的情求 post
+router.post('/user/reg',user.reg)
+
+
+
+
+
 module.exports = router;

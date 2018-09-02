@@ -2,12 +2,15 @@ const Koa = require('koa');
 const router = require('./routers/router');
 const static = require('koa-static');
 const views = require('koa-views');
+const body = require('koa-body');
 // const logger = require('koa-logger');
 const {join} = require('path');
 //生成Koa实例
 const app = new Koa();
 //注册日志文件
 // app.ues(logger())
+//配置koa-body
+app.use(body())
 //配置静态资源目录
 app.use(static(join(__dirname,"public")));
 //配置模板文件
