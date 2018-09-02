@@ -61,7 +61,9 @@ exports.login = async ctx =>{
 
     await new Promise( (resolve,reject)=>{
         User.find({username},(err,data)=>{
-            if(err)return reject(err);
+            if(err){
+                return reject(err);
+            }
             if(data.length===0) return reject("用户名不存在");
             //用户名存在 比对密码
             if(data[0].password === encrypt(password)){
@@ -75,7 +77,30 @@ exports.login = async ctx =>{
             status:"密码不正确,登录失败"
         })
     }
+
     //在他的cookie中 设置username password 权限等
+        ctx.cookies.set("username",username,{
+            domain:"localhost",
+            path:'/',
+            maxAge:36e5,
+            httpOnly:true, //true 不让客户端访问
+            overwrite:false
+
+        })
+        //用户在数据库内的_id
+        ctx.cookies.set("uid",data[0]._id,{
+            domain:"localhost",
+            path:'/',
+            maxAge:36e5,
+            httpOnly:true, //true 不让客户端访问
+            overwrite:false
+
+        })
+        // ctx.session =null; 强制过期
+        ctx.session = {
+            username,
+            uid:data[0]._id
+        }
         await ctx.render("isOk",{
             status:"登录成功!"
         })
@@ -84,9 +109,35 @@ exports.login = async ctx =>{
             await ctx.render('isOk',{
                 status:"用户不存在"
             })
+        }else{
+            await ctx.render('isOk',{
+                status:"登录失败"
+            })
         }
-        await ctx.render('isOk',{
-            status:"登录失败"
         })
-        })
+}
+
+//确定用户状态 保持登录状态
+exports.KeepLog = async (ctx,next)=>{
+    if(ctx.session.isNew){
+        if(ctx.cookies.get("username")){
+            ctx.session ={
+                username:ctx.cookies.get("username"),
+                uid:ctx.cookies.get("uid")
+            }
+        }
+    }
+    await next();
+}
+
+exports.logout = async ctx=>{
+    console.log(111111111111111)
+    ctx.session = null;
+    ctx.cookies.set('username',null,{
+        maxAge:0
+    })
+    ctx.cookies.set('uid',null,{
+        maxAge:0
+    })
+    ctx.redirect("/");//重定向
 }

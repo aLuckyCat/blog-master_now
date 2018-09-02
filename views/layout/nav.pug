@@ -18,8 +18,7 @@
         //- 用户登录按钮
         ul.layui-nav.blog-user
 
-          //if session && !session.isNew
-          if !true
+          if session && !session.isNew
             li.layui-nav-item
               a(href=session.role > 1 ? "/admin/user": "/admin/article") 个人中心
                 //- span.layui-badge-dot
@@ -30,7 +29,7 @@
                 span= session.username
               dl.layui-nav-child
                 dd
-                  a(href="/user/logout") 退了
+                  a(href="/user/userout") 退了
           else
             li.layui-nav-item
               a(href="/user/login") 登入

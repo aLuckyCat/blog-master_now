@@ -3,10 +3,23 @@ const router = require('./routers/router');
 const static = require('koa-static');
 const views = require('koa-views');
 const body = require('koa-body');
+const session = require('koa-session')
 // const logger = require('koa-logger');
 const {join} = require('path');
 //生成Koa实例
 const app = new Koa();
+app.keys = ['jxt']
+const CONFIG = {
+    key: "Sid",
+    maxAge:36e5,
+    overwrite :true,
+    httpOnly:true,
+    signed:true,
+    rolling:true
+}
+//配置 session
+app.use(session(CONFIG,app))
+
 //注册日志文件
 // app.ues(logger())
 //配置koa-body
