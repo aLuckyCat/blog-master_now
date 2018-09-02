@@ -18,7 +18,8 @@
         //- 用户登录按钮
         ul.layui-nav.blog-user
 
-          if session && !session.isNew
+          //if session && !session.isNew
+          if !true
             li.layui-nav-item
               a(href=session.role > 1 ? "/admin/user": "/admin/article") 个人中心
                 //- span.layui-badge-dot
