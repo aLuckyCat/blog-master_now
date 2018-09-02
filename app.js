@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const router = require('./routers/router');
 const static = require('koa-static');
-const views = require('koa-views'); 
+const views = require('koa-views');
 // const logger = require('koa-logger');
 const {join} = require('path');
 //生成Koa实例
