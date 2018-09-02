@@ -51,3 +51,42 @@ exports.reg = async ctx=>{
             })
         })
 }
+
+
+//用户登录
+exports.login = async ctx =>{
+    const user = ctx.request.body;
+    const username = user.username;
+    const password = user.password;
+
+    await new Promise( (resolve,reject)=>{
+        User.find({username},(err,data)=>{
+            if(err)return reject(err);
+            if(data.length===0) return reject("用户名不存在");
+            //用户名存在 比对密码
+            if(data[0].password === encrypt(password)){
+                return resolve(data)
+            }
+            resolve('')
+        })
+    }).then(async data =>{
+    if(!data){
+        return ctx.render('isOk',{
+            status:"密码不正确,登录失败"
+        })
+    }
+    //在他的cookie中 设置username password 权限等
+        await ctx.render("isOk",{
+            status:"登录成功!"
+        })
+    }).catch(async err=>{
+        if(err==="用户名不存在"){
+            await ctx.render('isOk',{
+                status:"用户不存在"
+            })
+        }
+        await ctx.render('isOk',{
+            status:"登录失败"
+        })
+        })
+}
