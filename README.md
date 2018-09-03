@@ -3,5 +3,6 @@
 
 #启动项目
 ```
+  node install  来安装依赖
   mongod --dbpath url  //启动mongodb的数据库服务并制定数据存储路径
-  node npm app.js     //启动入口文件
+  node  app.js     //启动入口文件
