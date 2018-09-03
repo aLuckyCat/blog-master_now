@@ -13,7 +13,7 @@ exports.addPage = async ctx=>{
         title:'文章发表页',
         session:ctx.session
     })
-}
+} 
 
 // 文章的发表 并保存到数据库
 
