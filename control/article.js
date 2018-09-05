@@ -35,16 +35,23 @@ exports.add = async ctx=>{
              if(err) return reject(err)
              resolve(data)
          })
-     }).then(data =>{
+     }).then(async data =>{
          console.log("发表成功")
-         ctx.body = {
+        ctx.response.body = {
              msg:'发表成功',
              status: 1
          }
-         console.log(ctx.body)
+         console.log(ctx)
+         console.log(">>>>>>>>>>>>>>>>>>>>>>>>")
+         console.log(ctx.response);
+         // ctx.body = {
+         //     msg:'发表成功',
+         //     status: 1
+         // }
+         // console.log(ctx.body)
      }).catch(err=>{
          console.log('我失败了')
-         ctx.body = {
+         ctx.response.body = {
              msg:'失败',
              status: 0
          }

@@ -1,7 +1,8 @@
 
 const Router = require('koa-router')
 const router = new Router();
-const user = require('../control/user')
+const user = require('../control/user');
+const article = require('../control/article')
 //设计主页
 router.get('/',user.KeepLog,async ctx=>{
     //需要title属性
@@ -23,6 +24,10 @@ router.post('/user/login',user.login)
 //退出情求
 router.get('/user/userout',user.logout);
 
+//返回文章页面
+router.get('/article',user.KeepLog,article.addPage)
 
+//发表文章
+router.post('/article',user.KeepLog,article.add)
 
 module.exports = router;
