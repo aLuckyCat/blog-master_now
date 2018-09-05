@@ -99,7 +99,8 @@ exports.login = async ctx =>{
         // ctx.session =null; 强制过期
         ctx.session = {
             username,
-            uid:data[0]._id
+            uid:data[0]._id,
+            avatar:data[0].avatar
         }
         await ctx.render("isOk",{
             status:"登录成功!"
