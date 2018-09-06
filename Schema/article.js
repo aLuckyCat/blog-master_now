@@ -7,7 +7,8 @@ const UserSchema =  new Schema({
     author:{
         type:ObjectId,
         ref:"users"
-    } //管理users 的表
+    }, //管理users 的表
+    commentNum:Number
 },{versionKey: false,timestamps:{
     createdAt:"created"
     }})

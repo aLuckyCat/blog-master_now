@@ -24,7 +24,6 @@ exports.addPage = async ctx=>{
 // 文章的发表 并保存到数据库
 
 exports.add = async ctx=>{
-    console.log("我在add路由里")
     if(ctx.session.isNew){
         //true 就是没登录
         return ctx.body = {
@@ -35,10 +34,17 @@ exports.add = async ctx=>{
     //用户在登陆状态 下  post发送回来的数据
     const data = ctx.request.body;
     data.author = ctx.session.uid;
+    data.commentNum = 0;
     //添加文章的作者
-     new Promise((resolve,reject)=>{
+     await new Promise((resolve,reject)=>{
          new Article(data).save((err,data)=>{
              if(err) return reject(err)
+             //保存成功时更新文章计数器
+             User.update({_id:data.author},{$inc:{
+                 articleNum:1
+                 }},err=>{
+                 if(err)console.log(err);
+             })
              resolve(data)
          })
      }).then(async data =>{
@@ -46,11 +52,6 @@ exports.add = async ctx=>{
              msg:'发表成功',
              status: 1
          }
-         // ctx.body = {
-         //     msg:'发表成功',
-         //     status: 1
-         // }
-         // console.log(ctx.body)
      }).catch(err=>{
          console.log('我失败了')
          ctx.body = {
@@ -70,7 +71,6 @@ exports.getList = async ctx=>{
     page--;
 
     const maxNum = await Article.estimatedDocumentCount((err,data)=> !err ? data:console.log(err));
-    console.log(maxNum)
     const num = (maxNum-(5*page)>=5) ? 5:(maxNum-(5*page));
     const artList = await Article
         .find()
@@ -109,7 +109,6 @@ exports.details = async ctx =>{
         .catch(err=>{
             console.log(err)
         })
-    console.log(comment)
     await ctx.render('article',{
         title:article.title,
         session:ctx.session,

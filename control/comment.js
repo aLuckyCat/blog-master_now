@@ -30,14 +30,20 @@ exports.save = async ctx=>{
     await _comment
         .save()
         .then(data =>{
-            console.log("评论成功")
             message = {
                 status:1,
                 msg:'评论成功'
             }
 
             //更新当前文章的计数器
-
+            Article
+                .update({_id:data.article},{$inc:{commentNum: 1}},err=>{
+                    if(err){
+                        console.log(err)
+                    }
+                })
+            //更新用户评论计数器
+            User.update({_id:data.from},{$inc:{commentNum:1}},err=>{if(err)console.log(err)})
         })
         .catch(err=>{
             message = {

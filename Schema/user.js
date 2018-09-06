@@ -6,6 +6,12 @@ const UserSchema =  new Schema({
     avatar:{
         type:String,
         default:'/avatar/default.jpg'
-    }
+    },
+    role:{
+        default:1,
+        type:String
+    },
+    articleNum:Number,
+    commentNum:Number
 },{versionKey: false})
 module.exports = UserSchema;

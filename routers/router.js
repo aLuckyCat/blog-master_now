@@ -3,7 +3,8 @@ const Router = require('koa-router')
 const router = new Router();
 const user = require('../control/user');
 const article = require('../control/article');
-const comment = require('../control/comment')
+const comment = require('../control/comment');
+const admin = require('../control/admin')
 //设计主页
 router.get('/',user.KeepLog,article.getList)
 //(:id)动态路由 用来处理 用户登录注册以及退出
@@ -33,4 +34,15 @@ router.get('/article/:id',user.KeepLog,article.details);
 
 //发表评论
 router.post('/comment',user.KeepLog,comment.save)
+
+// 文章  评论 头像上传
+router.get('/admin/:id',user.KeepLog,admin.index)
+
+
+
+router.get('*',async ctx =>{
+    await ctx.render('404',{
+        title:'404'
+    })
+})
 module.exports = router;
