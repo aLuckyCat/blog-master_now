@@ -83,6 +83,8 @@ exports.getList = async ctx=>{
         })//mongose 用来连表查询
         .then( data=> data)
         .catch(err=>err)
+
+
      await ctx.render('index', {
          session:ctx.session,
          title:'博客首页',
@@ -114,5 +116,63 @@ exports.details = async ctx =>{
         session:ctx.session,
         article,
         comment
+    })
+}
+
+//获取用户所有文章
+
+exports.artlist = async ctx =>{
+    console.log(11111111111111111111111122222222)
+    const id = ctx.session.uid;
+    const data = await Article.find({author:id});
+    ctx.body = {
+        code:0,
+        count:data.length,
+        data
+    }
+}
+
+//删除文章
+exports.del = async ctx=>{
+    const _id = ctx.params.id;
+    let uid = ctx.session.uid;
+    let res = {
+
+    }
+    await Article.deleteOne({_id}).exec(async (err)=>{
+        if(err){
+            res = {
+                state:0,
+                message:'删除失败'
+            }
+        }else{
+          await  Article.findById(_id,(err,data)=>{
+                if(err)return console.log(err)
+
+                uid = data.author;
+            })
+        }
+    })
+    await User.update({_id:uid},{$inc:{articleNum:-1}})
+    //删除所有评论
+    await Comment.find({article:_id}).then(async data=>{
+        //data 是一个数组
+        let len = data.length;
+        let i = 0;
+        async function deleteUser(){
+            if(i>=len)return
+            const cId = data[i]._id;
+            await  Comment.deleteOne({_id:cId}).then(data =>{
+                User.update({_id:data[i].form},{$inc:{commentNum:-1}},err =>{
+                    if(err)return console.log(err)
+                    i++;
+                })
+            })
+        }
+        await deleteUser();
+        res = {
+            state:1,
+            message:'成功'
+        }
     })
 }

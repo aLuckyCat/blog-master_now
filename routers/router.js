@@ -5,6 +5,7 @@ const user = require('../control/user');
 const article = require('../control/article');
 const comment = require('../control/comment');
 const admin = require('../control/admin')
+const upload = require('../util/update')
 //设计主页
 router.get('/',user.KeepLog,article.getList)
 //(:id)动态路由 用来处理 用户登录注册以及退出
@@ -38,7 +39,23 @@ router.post('/comment',user.KeepLog,comment.save)
 // 文章  评论 头像上传
 router.get('/admin/:id',user.KeepLog,admin.index)
 
+//头像上传功能
 
+router.post("/upload",user.KeepLog,upload.single('file'),user.upload)
+
+//获取用户所有评论
+router.get('/user/comments',user.KeepLog,comment.comlist)
+
+//删除路由 del  简写
+router.del('/comment/:id',user.KeepLog,comment.del)
+
+//返会用户所有文章
+
+router.get('/user/articles',user.KeepLog,article.artlist)
+
+
+//删除文章路由 del  简写
+router.del('/article/:id',user.KeepLog,article.del)
 
 router.get('*',async ctx =>{
     await ctx.render('404',{

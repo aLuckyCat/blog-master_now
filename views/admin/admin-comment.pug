@@ -37,6 +37,7 @@ block main
               articleId
             },
             success(res){
+              console.log(res.state)
               if(res.state){
                 layer.msg(res.message, {
                   anim: 1,
