@@ -1,15 +1,8 @@
-const {db} = require('../Schema/config');
-const ArticleSchema = require('../Schema/article');
-const Article = db.model('articles',ArticleSchema)
+
+const Article = require('../Models/article')
+const User = require('../Models/user')
+const Comment = require('../Models/comment')
 const encrypt = require('../util/encrypt');
-//获取用户的Schema 来操作用户数据库
-const UserSchema = require('../Schema/user');
-const User = db.model('users',UserSchema)
-
-//通过db对象创建操作article数据库的模型的对象
-const CommentSchema = require('../Schema/comment');
-const Comment = db.model('comments',CommentSchema);
-
 const fs = require('fs');
 const {join} = require('path')
 

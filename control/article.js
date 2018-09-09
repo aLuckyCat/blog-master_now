@@ -1,16 +1,7 @@
-const {db} = require('../Schema/config');
-const ArticleSchema = require('../Schema/article');
+const Article = require('../Models/article')
+const User = require('../Models/user')
+const Comment = require('../Models/comment')
 const encrypt = require('../util/encrypt');
-//获取用户的Schema 来操作用户数据库
-const UserSchema = require('../Schema/user');
-const User = db.model('users',UserSchema)
-
-//通过db对象创建操作article数据库的模型的对象
-
-const Article = db.model('articles',ArticleSchema)
-
-const CommentSchema = require('../Schema/comment');
-const Comment = db.model('comments',CommentSchema)
 
 
 //返回文章发表页
@@ -135,44 +126,20 @@ exports.artlist = async ctx =>{
 //删除文章
 exports.del = async ctx=>{
     const _id = ctx.params.id;
-    let uid = ctx.session.uid;
+
     let res = {
-
+        state:1,
+        massage:'成功'
     }
-    await Article.deleteOne({_id}).exec(async (err)=>{
-        if(err){
-            res = {
-                state:0,
-                message:'删除失败'
-            }
-        }else{
-          await  Article.findById(_id,(err,data)=>{
-                if(err)return console.log(err)
-
-                uid = data.author;
-            })
-        }
-    })
-    await User.update({_id:uid},{$inc:{articleNum:-1}})
-    //删除所有评论
-    await Comment.find({article:_id}).then(async data=>{
-        //data 是一个数组
-        let len = data.length;
-        let i = 0;
-        async function deleteUser(){
-            if(i>=len)return
-            const cId = data[i]._id;
-            await  Comment.deleteOne({_id:cId}).then(data =>{
-                User.update({_id:data[i].form},{$inc:{commentNum:-1}},err =>{
-                    if(err)return console.log(err)
-                    i++;
-                })
-            })
-        }
-        await deleteUser();
+    // Comment.findByIdAndRemove(commentId).exec()  findByIdAnd*   这些api都不会触发钩子
+    // new Comment({})//删除行为必须使用这种构造
+    await  Article.findById(_id).then(data=>{
+        data.remove()
+    }).catch(err=>{
         res = {
-            state:1,
-            message:'成功'
+            state:0,
+            massage:err
         }
     })
+    ctx.body = res;
 }

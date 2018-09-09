@@ -1,14 +1,8 @@
-const {db} = require('../Schema/config');
-const ArticleSchema = require('../Schema/article');
-const Article = db.model('articles',ArticleSchema)
-const encrypt = require('../util/encrypt');
-//获取用户的Schema 来操作用户数据库
-const UserSchema = require('../Schema/user');
-const User = db.model('users',UserSchema)
 
-//通过db对象创建操作article数据库的模型的对象
-const CommentSchema = require('../Schema/comment');
-const Comment = db.model('comments',CommentSchema);
+const encrypt = require('../util/encrypt');
+const Article = require('../Models/article')
+const User = require('../Models/user')
+const Comment = require('../Models/comment')
 
 
 
@@ -43,7 +37,7 @@ exports.save = async ctx=>{
                     }
                 })
             //更新用户评论计数器
-            User.update({_id:data.from},{$inc:{commentNum:1}},err=>{if(err)console.log(err)})
+            User.update({_id:data.form},{$inc:{commentNum:1}},err=>{if(err)console.log(err)})
         })
         .catch(err=>{
             message = {
@@ -67,30 +61,23 @@ exports.comlist = async ctx =>{
 
 //删除评论
 exports.del = async ctx =>{
-    const commentId = ctx.params.id;
-    let isOk = true;
-    //让文章的计数器减一
-    // await Article.update({_id:articleId},{$inc:{commentNum:-1}})
-    // await User.update({_id:uid},{$inc:{commentNum:-1}})
-    let articleId,uid;
+    // 拿到 commentID
 
-    await  Comment.findById(commentId,(err,data )=>{
-        if(err){
-            console.log(err)
-            isOk = false;
-        }else{
-         articleId = data.article;
-         uid = data.form;
+    const commentId = ctx.params.id;
+
+    let res = {
+        state:1,
+        massage:'成功'
+    }
+    // Comment.findByIdAndRemove(commentId).exec()  findByIdAnd*   这些api都不会触发钩子
+    // new Comment({})//删除行为必须使用这种构造
+   await  Comment.findById(commentId).then(data=>{
+        data.remove()
+    }).catch(err=>{
+        res = {
+            state:0,
+            massage:err
         }
     })
-    await Article.update({_id:articleId},{$inc:{commentNum:-1}})
-    await User.update({_id:uid},{$inc:{commentNum:-1}})
-    await Comment.deleteOne({_id:commentId})
-    if(isOk){
-        ctx.body = {
-            state:1,
-            message:'删除成功!'
-        }
-    }
+    ctx.body = res;
 }
-

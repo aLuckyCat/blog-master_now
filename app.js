@@ -6,8 +6,14 @@ const body = require('koa-body');
 const session = require('koa-session')
 // const logger = require('koa-logger');
 const {join} = require('path');
+const compress = require('koa-compress')
 //生成Koa实例
 const app = new Koa();
+// 资源压缩模块
+app.use(compress({
+    threshold: 2048,
+    flush: require('zlib').Z_SYNC_FLUSH
+}))
 app.keys = ['jxt']
 const CONFIG = {
     key: "Sid",

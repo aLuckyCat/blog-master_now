@@ -1,6 +1,6 @@
 const {Schema} = require('./config');
 const ObjectId = Schema.Types.ObjectId;
-const UserSchema =  new Schema({
+const ArticleSchema =  new Schema({
     title:String,
     tips:String,
     content:String,
@@ -12,4 +12,15 @@ const UserSchema =  new Schema({
 },{versionKey: false,timestamps:{
     createdAt:"created"
     }})
-module.exports = UserSchema;
+ArticleSchema.post('remove',doc=>{
+    const Comment = require('../Models/comment')
+    const User = require('../Models/user');
+    const {_id:artId , author:authorId } = doc;
+    User.findByIdAndUpdate(authorId,{$inc:{articleNum:-1}}).exec();
+    Comment.find({article:artId}).then(data=>{
+        data.forEach(v=>{
+            v.remove();
+        })
+    })
+})
+module.exports = ArticleSchema;
